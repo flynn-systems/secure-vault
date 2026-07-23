@@ -8,7 +8,7 @@ Each article corresponds to a tagged [Release](../../releases) in this repo. Che
 
 | Article | Tag | What it covers |
 |---|---|---|
-| [Seven Projects You Don't Need Yet](#) | `article-03` | Solution structure: two projects, vertical slice folders, no logic yet |
+| [Seven Projects You Don't Need Yet](https://flynnsystems.substack.com/p/seven-projects-you-dont-need-yet) | `article-03` | Solution structure: two projects, vertical slice folders, no logic yet |
 
 ## Prerequisites
 
@@ -49,9 +49,28 @@ dotnet new gitignore
 
 # Init git repo
 git init
+
+# Scalar UI for browsing the OpenAPI document. Not included by the webapi
+# template by default, the template only scaffolds the OpenAPI document
+# generator (Microsoft.AspNetCore.OpenApi), the UI is a separate package.
+cd Vault.Api
+dotnet add package Scalar.AspNetCore
+cd ..
 ```
 
-That's the whole scaffold. No Clean Architecture layers, no seven projects, see [Seven Projects You Don't Need Yet](#) for why.
+Then add a `using` directive and the Scalar UI mapping to `Vault.Api/Program.cs`, right next to the existing `MapOpenApi()` call:
+
+```csharp
+using Scalar.AspNetCore;
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
+```
+
+That's the whole scaffold. No Clean Architecture layers, no seven projects, see [Seven Projects You Don't Need Yet](https://flynnsystems.substack.com/p/seven-projects-you-dont-need-yet) for why.
 
 ## Running it
 
@@ -73,10 +92,20 @@ dotnet test
 ```
 Vault.Api/
   Features/
-    Documents/      # Upload, retrieve, delete
-    Auth/            # Login, registration
-    Sharing/         # Share links
-    AuditLog/        # Cross-cutting, written to by every feature above
+    Documents/
+      UploadDocument.cs
+      GetDocument.cs
+      DeleteDocument.cs
+      Document.cs
+    Auth/
+      Login.cs
+      Register.cs
+    Sharing/
+      CreateShareLink.cs
+      RevokeShareLink.cs
+  AuditLog/
+    AuditEntry.cs
+    AuditLogger.cs
   Infrastructure/
     VaultDbContext.cs
     Migrations/
